@@ -66,9 +66,9 @@ lgt = hg.CreateSpotLight(scene, hg.TransformationMat4(hg.Vec3(-8, 4, -5), hg.Vec
 #back_lgt = hg.CreatePointLight(scene, hg.TranslationMat4(hg.Vec3(2.4, 1, 0.5)), 10, hg.Color(94 / 255, 255 / 255, 228 / 255, 1), hg.Color(94 / 255, 1, 228 / 255, 1), 0)
 
 mat_cube = create_material(hg.Vec4(255 / 255, 230 / 255, 20 / 255, 1), hg.Vec4(1, 0.658, 0., 1), hg.Vec4(1, 1, 0, 1))
-plot_object = hg.CreateObject(scene, hg.TransformationMat4(hg.Vec3(-1.5, 0, 0), hg.Vec3(0, 0, 0), hg.Vec3(0.05, 0.05, 0.05)), cube_ref, [mat_cube])
 
-mat_sphere = create_material(hg.Vec4(16 / 255, 32 / 255, 255 / 255, 0.5), hg.Vec4(1, 0.658, 0., 1), hg.Vec4(0, 0, 0, 0), hg.BM_Alpha)
+
+mat_sphere = create_material(hg.Vec4(16 / 255, 32 / 255, 255 / 255, 0.5), hg.Vec4(1, 0.658, 0., 1), hg.Vec4(0, 0, 0, 0))
 hg.CreateObject(scene, hg.TransformationMat4(hg.Vec3(0, 0, 0), hg.Vec3(0, 0, 0)), sphere_ref, [mat_sphere])
 
 mat_ground = create_material(hg.Vec4(0, 0, 0, 0.5), hg.Vec4(1, 1, 0.1, 1), hg.Vec4(0.1, 0.1, 0.1, 1), hg.BM_Alpha)
@@ -84,7 +84,12 @@ file = open('TLE/TLE 100 or so brightest 2022 Oct 24 12_05_27 UTC.txt', 'r')
 Lines = file.readlines()
 
 #Ignore name line and grab 2 next lines
-TLE = Lines[1] + Lines[2]
+i=0
+objects = []
+while i < len(Lines):
+    objects.append({"orbit": Lines[i+1] + Lines[i+2], "plot": hg.CreateObject(scene, hg.TransformationMat4(hg.Vec3(0, 0, 0), hg.Vec3(0, 0, 0), hg.Vec3(0.01, 0.01, 0.01)), cube_ref, [mat_cube])})
+    i+=3
+
 t_orbit = 0
 
 # Main loop
@@ -102,9 +107,10 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(win):
     earth_radius = 6370000
     scale = earth_model_radius / earth_radius
     t_orbit += hg.time_to_sec_f(dt) * 1000
-    x,y,z = propagTLEinXYZ(TLE, t_orbit)
-    pos = hg.Vec3(x, y, z) * scale
-    plot_object.GetTransform().SetPos(pos)
+    for object in objects:
+        x,y,z = propagTLEinXYZ(object["orbit"], t_orbit)
+        pos = hg.Vec3(x, y, z) * scale
+        object["plot"].GetTransform().SetPos(pos)
 
     scene.Update(dt)
 
