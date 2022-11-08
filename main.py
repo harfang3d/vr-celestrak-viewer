@@ -112,7 +112,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(win):
     t_orbit += hg.time_to_sec_f(dt) * 100
     for object in objects:
         x,y,z = propagTLEinXYZ(object["orbit"], t_orbit)
-        pos = hg.Vec3(x, z, -y) * scale
+        pos = hg.Vec3(x, z, y) * scale
         object["plot"].GetTransform().SetPos(pos)
 
     scene.Update(dt)
