@@ -80,7 +80,8 @@ mouse = hg.Mouse()
 # Extract orbit
 
 #Open TLE file
-file = open('TLE/TLE 100 or so brightest 2022 Oct 24 12_05_27 UTC.txt', 'r')
+#file = open('TLE/TLE 100 or so brightest 2022 Oct 24 12_05_27 UTC.txt', 'r')
+file = open('TLE/cosmos-2251-debris.txt', 'r')
 Lines = file.readlines()
 
 #Ignore name line and grab 2 next lines
@@ -89,6 +90,8 @@ objects = []
 while i < len(Lines):
     objects.append({"orbit": Lines[i+1] + Lines[i+2], "plot": hg.CreateObject(scene, hg.TransformationMat4(hg.Vec3(0, 0, 0), hg.Vec3(0, 0, 0), hg.Vec3(0.01, 0.01, 0.01)), cube_ref, [mat_cube])})
     i+=3
+
+print(str(len(objects)))
 
 t_orbit = 0
 
@@ -106,10 +109,10 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(win):
     #Get orbit position:
     earth_radius = 6370000
     scale = earth_model_radius / earth_radius
-    t_orbit += hg.time_to_sec_f(dt) * 1000
+    t_orbit += hg.time_to_sec_f(dt) * 100
     for object in objects:
         x,y,z = propagTLEinXYZ(object["orbit"], t_orbit)
-        pos = hg.Vec3(x, y, z) * scale
+        pos = hg.Vec3(x, z, -y) * scale
         object["plot"].GetTransform().SetPos(pos)
 
     scene.Update(dt)
