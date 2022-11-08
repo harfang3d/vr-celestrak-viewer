@@ -4,7 +4,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 
 #Open TLE file
-file = open('TLE 100 or so brightest 2022 Oct 24 12_05_27 UTC.txt', 'r')
+file = open('TLE/TLE 100 or so brightest 2022 Oct 24 12_05_27 UTC.txt', 'r')
 Lines = file.readlines()
 
 #Open plot
